@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
 
 typedef struct list {
@@ -22,7 +23,7 @@ typedef struct list {
 
 list* last = NULL;
 list* head = NULL;
-int bool = 1;
+int _sys = 1;
 typedef struct stek {
     float data;
     char ch;
@@ -44,7 +45,7 @@ void InitFile(FILE* input)
     if (futureLast->ch[0] == '\0') // Если файл заканчивается
     {
         free(futureLast); //Освобождаем память
-        bool = 0;
+        _sys = 0;
     }
     else {
         while (futureLast->ch[size] != ' ') {
@@ -84,12 +85,8 @@ float number_calc(char operation, float value1, float value2)
             result_elem = value1 / value2;
     }
     if (operation == '^') {
-        result_elem = value1;
         if (value2 != 0) {
-            for (int i = 1; i < value2; i++) {
-                value1 = value1 + result_elem;
-                result_elem = value1;
-            }
+            result_elem = powf(value1, value2);
         }
         else {
             result_elem = 1;
@@ -108,8 +105,8 @@ int main(void)
 {
     FILE *input, *output; //Файлы на ввод и вывод
     input = fopen("input.txt", "r"); //Открываем файл на ввод
-    while (bool) {
-        InitFile(input);
+    while (_sys) { // Пока элементы в файле не кончатся
+        InitFile(input); // Читаем его
     }
     //Когда файл прочтён
     fclose(input); //Закрываем его
@@ -118,7 +115,7 @@ int main(void)
     while (head != NULL) // Перебор стека с элементами
     {
         if (head->ch[0] != '&') {
-            if (head->ch[0] == '+' || head->ch[0] == '*' || head->ch[0] == '/' || head->ch[0] == '!' || (head->ch[0] == '-' && head->ch[1] == ' ')) {
+            if (head->ch[0] == '+' || head->ch[0] == '*' || head->ch[0] == '/' || head->ch[0] == '!' || head->ch[0] == '^' || (head->ch[0] == '-' && head->ch[1] == ' ')) {
                 if (head->ch[0] != '!') {
                     headFstek->next_stek->data = number_calc(head->ch[0], headFstek->next_stek->data, headFstek->data);
                 }
